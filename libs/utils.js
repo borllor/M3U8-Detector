@@ -1,7 +1,7 @@
 
 function existsInArray(arr, newValue) {
     if (arr && typeof (arr) === typeof ([])) {
-        for (var i = 0; i < arr.length; i++) {
+        for (let i = 0; i < arr.length; i++) {
             if (newValue === arr[i]) {
                 return true;
             }

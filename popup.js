@@ -11,26 +11,25 @@ getUrlCollectorVal(function (data) {
 });
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
-    for (var key in changes) {
-        if (key === "urlCollector") {
+    for (let key in changes) {
+        if (key === UrlCollectorStorageName) {
             // When capturing a new url, print it.
-            var urlArr = changes[key].newValue;
-            showUrlCollectorValue(urlArr);
+            let windowRoot = changes[key].newValue;
+            showUrlCollectorValue(windowRoot);
         }
     }
-}
-);
+});
 
-function showUrlCollectorValue(urlArr) {
-    if (urlArr &&
-        typeof (urlArr) === typeof ([]) &&
-        urlArr.length > 0) {
+function showUrlCollectorValue(windowRoot) {
+    if (windowRoot) {
         let summary = "";
-        for (var i = 0; i < urlArr.length; i++) {
-            summary = summary + urlArr[i] + "<br />";
-        }
-        let t = document.getElementById("urlCollector");
-        if (t) t.innerHTML = summary;
+        getTabIdBySetting(function (currentTabId) {
+            forEachResourceInWindowRoot(windowRoot, currentTabId, function (tabId) {
+                summary = summary + this.url + "<br />";
+            });
+            let elm = document.getElementById("urlCollector");
+            if (elm) elm.innerHTML = summary;
+        });
     }
 }
 
