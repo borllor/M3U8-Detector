@@ -14,9 +14,7 @@ chrome.runtime.onInstalled.addListener(function () {
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     // When refreshing the tab page, clear urlCollector's data.
     if (changeInfo["status"] === "loading") {
-        setUrlCollectorVal([], function () {
-            console.log('set urlCollector to null.' + changeInfo.toString());
-        });
+        initize();
     }
 });
 
@@ -31,6 +29,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 if (!existsInArray(urlArr, url)) {
                     urlArr.push(url);
                     setUrlCollectorVal(urlArr, function () {
+                        setBadgeText(urlArr);
                         copyTextToClipboard(document, urlArr.toString("\r\n"));
                     });
                 }
@@ -40,4 +39,18 @@ chrome.webRequest.onBeforeRequest.addListener(
     },
     { urls: ["<all_urls>"] },
     ["blocking"]
-)
+);
+
+function initize(){
+    chrome.browserAction.setBadgeText({ text: "" });
+    setUrlCollectorVal([], function () {
+        console.log('set urlCollector to null.' + changeInfo.toString());
+    });
+}
+
+function setBadgeText(urlArr) {
+    if (urlArr && urlArr.length < 12) {
+        let badgeText = urlArr.length > 10 ? "10+" : (urlArr.length + "")
+        chrome.browserAction.setBadgeText({ text: badgeText });
+    }
+}

@@ -15,8 +15,9 @@
         "page": "background.html",
         "persistent": true
     },
-    "page_action": {
+    "browser_action": {
         "default_popup": "popup.html",
+        "default_title": "M3U8 Detector",
         "default_icon": {
             "16": "images/get_started16.png",
             "32": "images/get_started32.png",
