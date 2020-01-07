@@ -1,6 +1,9 @@
 'use strict';
 
 chrome.runtime.onInstalled.addListener(function () {
+    setUrlCollectorVal(new WindowRoot(), function () {
+        console.log("init WindowRoot object!");
+    });
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
         chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [
@@ -39,25 +42,11 @@ function filterUrl(request, url) {
     if (!url) return;
     if (filtered(url)) {
         let tabId = request.tabId;
-        let urlArr = null;
         getUrlCollectorVal(function (data) {
-            /*
-            Data structure:
-            windowRoot{}:
-                tabId1[]:
-                    res: {url: resource_url11, mediaType: "video/mp4", length: 12321234, ext: {}}
-                    res: {url: resource_url12, ext: {}}
-                tabId2[]:
-                    res: {url: resource_url21, ext: {}}
-                    res: {url: resource_url22, ext: {}}  
-            */
             let windowRoot = data;
-            if (!windowRoot) windowRoot = {};
-            if (!windowRoot[tabId]) windowRoot[tabId] = [];
-            let tabCol = windowRoot[tabId];
-            if (!existResource(tabCol, request)) {
-                let res = { "url": request.url, "tabId": tabId, "request": request };
-                tabCol.push(res);
+            if (!windowRoot) { windowRoot = new WindowRoot(); }
+            let res = new Res(request.url, request);
+            if (windowRoot.pushRes(tabId, res)) {
                 setUrlCollectorVal(windowRoot, function () {
                     setBadgeText(windowRoot);
                     copyResourceUrlToClipboard(document, windowRoot);
@@ -65,17 +54,6 @@ function filterUrl(request, url) {
             }
         });
     }
-}
-function existResource(tabCol, request) {
-    if (tabCol && request && tabCol.length > 0) {
-        for (let i = 0; i < tabCol.length; i++) {
-            if (tabCol[i]["url"] === request.url) {
-                return true;
-            }
-        }
-    }
-
-    return false;
 }
 function filtered(url) {
     var filterExtensionsStr = setting.filterExtensions;
@@ -110,13 +88,9 @@ function initData() {
         copyResourceUrlToClipboard(document, windowRoot);
     });
 }
-
 function setBadgeText(windowRoot) {
-    let resourceCount = 0;
     getTabIdBySetting(function (currentTabId) {
-        forEachResourceInWindowRoot(windowRoot, currentTabId, function (tabId) {
-            resourceCount++;
-        });
+        let resourceCount = windowRoot.getTabResCount(currentTabId);
         if (resourceCount <= 0) {
             chrome.browserAction.setBadgeText({ text: "" });
             return;
@@ -129,9 +103,9 @@ function setBadgeText(windowRoot) {
 function copyResourceUrlToClipboard(document, windowRoot) {
     let summary = "";
     getTabIdBySetting(function (currentTabId) {
-        forEachResourceInWindowRoot(windowRoot, currentTabId, function (tabId) {
-            summary = summary + this.url + "\r\n";
-        });
+        windowRoot.foreachTabRes(function () {
+            summary = summary + this.getUrl() + "\r\n";
+        }, currentTabId);
         copyTextToClipboard(document, summary);
     });
 }

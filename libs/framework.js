@@ -5,7 +5,9 @@ var UrlCollectorStorageName = "UrlCollector";
 function getUrlCollectorVal(callback) {
     let _this = this;
     storage.get("UrlCollector", function (data) {
-        if (callback && data) callback.call(_this, data[UrlCollectorStorageName]);
+        if (callback && data) {
+            callback.call(_this, applyWindowRootPrototype(data[UrlCollectorStorageName]));
+        }
     });
 }
 
@@ -14,6 +16,13 @@ function setUrlCollectorVal(value, callback) {
     storage.set({ "UrlCollector": value }, function () {
         if (callback) callback.call(_this)
     });
+}
+
+function applyWindowRootPrototype(windowRoot) {
+    if (windowRoot && typeof (windowRoot.pushRes) === "function") {
+        return windowRoot;
+    }
+    return assignType(windowRoot);
 }
 
 // when tabId = 0, it will enumerate all resource or the special tab 

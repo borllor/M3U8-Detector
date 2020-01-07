@@ -24,9 +24,9 @@ function showUrlCollectorValue(windowRoot) {
     if (windowRoot) {
         let summary = "";
         getTabIdBySetting(function (currentTabId) {
-            forEachResourceInWindowRoot(windowRoot, currentTabId, function (tabId) {
-                summary = summary + this.url + "<br />";
-            });
+            windowRoot.foreachTabRes(function () {
+                summary = summary + this.getUrl() + "<br />";
+            }, currentTabId);
             let elm = document.getElementById("urlCollector");
             if (elm) elm.innerHTML = summary;
         });

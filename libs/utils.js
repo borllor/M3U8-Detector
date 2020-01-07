@@ -10,6 +10,32 @@ function existsInArray(arr, newValue) {
     return false;
 }
 
+function assignType(object) {
+    if (object && typeof (object) === 'object' && window[object.__type]) {
+        object = assignTypeRecursion(object.__type, object);
+    }
+    return object;
+}
+
+function assignTypeRecursion(type, object) {
+    for (var key in object) {
+        if (object.hasOwnProperty(key)) {
+            var obj = object[key];
+            if (Array.isArray(obj)) {
+                for (var i = 0; i < obj.length; ++i) {
+                    var arrItem = obj[i];
+                    if (arrItem && typeof (arrItem) === 'object' && window[arrItem.__type]) {
+                        obj[i] = assignTypeRecursion(arrItem.__type, arrItem);
+                    }
+                }
+            } else if (obj && typeof (obj) === 'object' && window[obj.__type]) {
+                object[key] = assignTypeRecursion(obj.__type, obj);
+            }
+        }
+    }
+    return Object.assign(new window[type](), object);
+}
+
 function copyTextToClipboard(doc, text) {
     //Create a textbox field where we can insert text to. 
     var copyFrom = doc.createElement("textarea");
