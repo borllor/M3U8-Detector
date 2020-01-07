@@ -1,3 +1,5 @@
+'use strict';
+
 function Res(url, ext) {
     this._url = url;
     this._ext = ext;

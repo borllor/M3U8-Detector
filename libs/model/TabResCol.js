@@ -1,3 +1,5 @@
+'use strict';
+
 function TabResCol() {
     this._col = [];
     this._count = 0;

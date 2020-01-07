@@ -1,4 +1,6 @@
 
+'use strict';
+
 /* begin: Object extension */
 Object.prototype.toString = function () {
     let obj = this;

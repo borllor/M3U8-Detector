@@ -60,9 +60,15 @@ function filtered(url) {
     if (filterExtensionsStr) {
         var filterExtensions = filterExtensionsStr.split(setting.filterExtensionsSeparator);
         for (var i = 0; i < filterExtensions.length; i++) {
-            let reg = getExtensionToRegex(filterExtensions[i]);
-            if (reg.test(url)) {
-                return true;
+            if (setting.filterMatchingType == "regex") {
+                let reg = getExtensionToRegex(filterExtensions[i]);
+                if (reg.test(url)) {
+                    return true;
+                }
+            } else {
+                if (url.indexOf(filterExtensions[i]) > 0) {
+                    return true;
+                }
             }
         }
     }

@@ -1,3 +1,5 @@
+'use strict';
+
 function TabCol() {
     this._col = [];
     this._count = 0;

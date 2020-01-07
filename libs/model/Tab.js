@@ -1,3 +1,5 @@
+'use strict';
+
 function Tab(tabId) {
     this._col = new TabResCol(); // collector for Res
     this._url = "";

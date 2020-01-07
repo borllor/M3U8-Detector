@@ -1,3 +1,5 @@
+'use strict';
+
 function WindowRoot() {
     this._col = new TabCol(); // collector for Tab
     this.__type = "WindowRoot";

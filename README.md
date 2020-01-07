@@ -18,4 +18,4 @@
             res: {}
 ```
 
-8. recasting via using OOP.
+8. Recasting via using OOP.

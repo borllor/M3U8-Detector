@@ -1,3 +1,4 @@
+'use strict';
 
 function existsInArray(arr, newValue) {
     if (arr && typeof (arr) === typeof ([])) {

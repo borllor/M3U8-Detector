@@ -1,3 +1,5 @@
+'use strict';
+
 // declare global variables
 var storage = chrome.storage.local;
 var UrlCollectorStorageName = "UrlCollector";
