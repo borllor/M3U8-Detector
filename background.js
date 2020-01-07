@@ -49,7 +49,9 @@ function filterUrl(request, url) {
             if (windowRoot.pushRes(tabId, res)) {
                 setUrlCollectorVal(windowRoot, function () {
                     setBadgeText(windowRoot);
-                    copyResourceUrlToClipboard(document, windowRoot);
+                    if (setting.isAutoCopyingResourceToClipboard) {
+                        copyResourceUrlToClipboard(document, windowRoot);
+                    }
                 });
             }
         });
@@ -101,7 +103,7 @@ function setBadgeText(windowRoot) {
             chrome.browserAction.setBadgeText({ text: "" });
             return;
         }
-        var badgeText = resourceCount > 10 ? "10+" : (resourceCount + "")
+        var badgeText = resourceCount > setting.limitedBadgeNumber ? (setting.limitedBadgeNumber + "+") : (resourceCount + "")
         chrome.browserAction.setBadgeText({ text: badgeText });
     });
 }
